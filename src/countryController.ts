@@ -3,6 +3,7 @@ import { refreshCountriesData } from './refreshService';
 import { AppDataSource } from './configuration';
 import { Country } from './country.entity';
 import * as fs from 'fs';
+import * as path from 'path';
 import { getSummaryImagePath } from './summaryImage';
 
 export const refreshCountries = async (req: Request, res: Response) => {
@@ -114,19 +115,21 @@ export const getStatus = async (req: Request, res: Response) => {
 };
 
 export const getSummaryImage = async (req: Request, res: Response) => {
-    try {
-        const imagePath = getSummaryImagePath();
-        
-        if (!fs.existsSync(imagePath)) {
-            return res.status(404).json({ error: "Summary image not found" });
-        }
+  try {
+    const imagePath = getSummaryImagePath();
+    const resolvedPath = path.resolve(imagePath);
 
-        res.sendFile(imagePath);
-
-    } catch (error: any) {
-        console.error("Error serving summary image:", error);
-        res.status(500).json({ 
-            error: "Internal server error", 
-            details: error.message });
+    if (!fs.existsSync(resolvedPath)) {
+      return res.status(404).json({ error: "Summary image not found" });
     }
+
+    res.setHeader('Content-Type', 'image/png');
+    return res.sendFile(resolvedPath);
+  } catch (error: any) {
+    console.error("Error serving summary image:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      details: error.message
+    });
+  }
 };

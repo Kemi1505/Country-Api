@@ -1,4 +1,4 @@
-import { createCanvas } from 'canvas';
+import { createCanvas, registerFont } from 'canvas';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -8,7 +8,7 @@ interface SummaryData {
   lastRefreshedAt: string;
 }
 
-const CACHE_DIR = path.join(__dirname, '..', 'cache');
+const CACHE_DIR = path.join(process.cwd(), 'cache');
 const SUMMARY_PATH = path.join(CACHE_DIR, 'summary.png');
 
 export const generateSummaryImage = async (data: SummaryData) => {
@@ -17,14 +17,17 @@ export const generateSummaryImage = async (data: SummaryData) => {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
   }
 
-
+  // Canvas dimensions
   const width = 1200;
   const height = 800;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
+
+  // Background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, width, height);
 
+  // Basic fonts (system fallback)
   const titleFont = 'bold 36px Arial';
   const headerFont = '24px Arial';
   const bodyFont = '20px Arial';
@@ -51,6 +54,7 @@ export const generateSummaryImage = async (data: SummaryData) => {
   ctx.font = headerFont;
   ctx.fillText(`Last refreshed: ${data.lastRefreshedAt}`, 40, height - 80);
 
+  // Save PNG
   const buffer = canvas.toBuffer('image/png');
   fs.writeFileSync(SUMMARY_PATH, buffer);
 };
