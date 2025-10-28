@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS `country_cache`
+CREATE DATABASE IF NOT EXISTS `railway`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
-USE `country_cache`;
+USE `railway`;
 
 CREATE TABLE IF NOT EXISTS `countries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
